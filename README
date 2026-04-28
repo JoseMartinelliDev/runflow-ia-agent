@@ -1,0 +1,88 @@
+Este projeto demonstra a implementação de um agentic loop utilizando o Vercel AI SDK e o modelo Google Gemini 2.5 Flash, conectando um LLM a um backend mockado através de chamadas de ferramentas (tool calling).
+Decidi Usar o Gemini, pois é a IA que eu mais uso hoje em dia, usei o servidor Express por afinidade (ja utilizei em outro projeto). E o Vercel AI SDK foi uma escolha que tomei pesquisando, pelo que vi esse framework é um dos mais usados atualmente no mercado.
+
+# Funcionalidades
+
+- Chatbot Contextual: Mantém o histórico da sessão em memória, compreendendo o contexto ao longo daconversa.
+- Roteamento Inteligente de Ferramentas: O agente decide autonomamente qual rota da API chamar com base na intenção do usuário.
+- Catálogo de Produtos: Consulta de lista resumida e detalhes específicos de produtos (preço, estoque, descrição).
+- Checkout Conversacional: Criação de pedidos com validação de estoque e exigência de quantidade antes da finalização.
+- Consulta de Status: Rastreamento de pedidos gerados pelo ID.
+- Gera erros descritivos e transparentes ao usuário, ao inserir algo fora de contexto, automaticamente ele detecta e volta ao assunto principal.
+
+# Tecnologias e Arquitetura
+
+- **Linguagem:** TypeScript / Node.js
+- **AI Framework:** [Vercel AI SDK](https://sdk.vercel.ai/docs)
+- **LLM:** Google Gemini 2.5 Flash (via `@ai-sdk/google`)
+- **Validação e Contratos:** Zod (Tipagem estrita para parâmetros de ferramentas)
+- **Backend Mock:** Express.js (Gerenciamento de rotas e estado em memória)
+
+# Estrutura do Projeto
+
+\`\`\`
+src/
+├── agent/
+│   ├── prompts.ts      # System Prompt contendo regras de negócio e limites
+│   └── tools.ts        # Definição dos Schemas (Zod) e chamadas fetch para a API
+├── api/
+|   ├── server.ts       # Servidor Express com rotas HTTP simulando o backend
+└── index.ts            # Ponto de entrada, loop conversacional e injeção de contexto
+\`\`\`
+
+# Como Executar o Projeto
+
+### Pré-requisitos
+- [Node.js](https://nodejs.org/) (versão 18+ recomendada)
+- Uma chave de API gratuita do [Google AI Studio](https://aistudio.google.com/)
+
+# Instalação
+
+1. Clone o repositório:
+   \`\`\`bash
+   git clone https://github.com/JoseMartinelliDev/runflow-ai-agent.git
+   cd runflow-ai-agent
+   \`\`\`
+
+2. Instale as dependências:
+   \`\`\`bash
+   npm init -y
+   npm install express dotenv zod ai @ai-sdk/google
+   npm install -D typescript @types/node @types/express tsx
+   npx tsc --init
+   \`\`\`
+
+3. Configure as variáveis de ambiente:
+   - Copie o arquivo de exemplo: \`cp .env.example .env\`
+   - Abra o arquivo \`.env\` e insira sua API Key do Google:
+   \`\`\`env
+   GOOGLE_GENERATIVE_AI_API_KEY=sua_chave_api_aqui
+   PORT=3000
+   \`\`\`
+
+4. Inicie o agente:
+   \`\`\`bash
+   npx tsx src/index.ts
+   \`\`\`
+
+# Exemplos de Interação
+
+O agente é treinado para não alucinar dados e seguir um fluxo rigoroso de negócios. 
+
+**Exemplo de retenção de contexto e validação:**
+> **Usuário:** Quais produtos vocês têm?
+> **Agente:** *(Chama `list_products`)* Temos Notebooks, Mouses e Monitores.
+> **Usuário:** Quero comprar o Mouse.
+> **Agente:** *(Percebe a ausência do parâmetro 'quantidade')* Excelente! Quantas unidades do Mouse Sem Fio você deseja?
+> **Usuário:** Apenas uma.
+> **Agente:** *(Chama `create_order`)* Pedido criado com sucesso! Seu ID é 1002.
+
+# Observações
+
+ Por ser minha primeira vez trabalhando com um AI Agent, tive dificuldades em entender como a tool calling funciona. Porém a estrutura é bem parecida com outros projetos que eu ja fiz, e deixar as descrições das ferramentas (tools) extremamente claras foi a chave para destravar esse projeto, percebi que com informações nao tão objetivas, as ambiguidades se tornavam um grande problema nas respostas.
+ 
+ No geral é um projeto simples, eu gostaria de melhorar implementando um banco de dados SQL e uma LLM paga para poder melhorar a conversação com o agente, mas para um primeiro projeto, acho que está bem estruturado.
+
+
+# Licença
+Este projeto foi criado para fins de estudo e portfólio. Sinta-se livre para utilizar e modificar.
