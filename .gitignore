@@ -1,5 +1,10 @@
-# Ignorar dependencias pesadas 
-node-modules/
+# Dependências
+node_modules/
 
-# Ignorar chaves secretas e configurações locais
+# Variáveis de ambiente (NUNCA suba o .env para o GitHub)
 .env
+
+# Builds e logs
+dist/
+build/
+npm-debug.log*
