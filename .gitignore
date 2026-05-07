@@ -1,0 +1,5 @@
+# Ignorar dependencias pesadas 
+node-modules/
+
+# Ignorar chaves secretas e configurações locais
+.env
